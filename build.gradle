@@ -1,0 +1,152 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.6'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
+    id 'checkstyle'
+    id "org.sonarqube" version '7.2.3.7755'
+    id 'pl.allegro.tech.build.axion-release' version '1.21.1'
+}
+
+group = 'io.tomaszstr'
+description = 'SimpleStockMarket'
+
+// --- AXION VERSIONING ---
+scmVersion {
+    tag { prefix = 'v' }
+}
+project.version = scmVersion.version
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation platform('org.testcontainers:testcontainers-bom:1.20.1')
+
+    // --- Core Application ---
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.liquibase:liquibase-core'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // --- Utility (Lombok) ---
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // --- Development (Docker Compose) ---
+    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+
+    // --- Testing ---
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+
+    // Spring Boot's official integration for Testcontainers
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+
+    // Testcontainers Postgres module
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'org.testcontainers:junit-jupiter'
+
+    // Lombok for tests
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+jacoco {
+    toolVersion = "0.8.14"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+def jacocoExclusions = [
+        "**/SimpleStockMarketApplication.*",
+        "**/*Dto.*",
+        "**/config/**",
+        "**/entities/**"
+]
+
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoExclusions)
+        }))
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+
+    violationRules {
+        rule {
+            element = 'BUNDLE'
+            limit {
+                counter = 'INSTRUCTION'
+                value = 'COVEREDRATIO'
+                minimum = 0.80.toBigDecimal()
+            }
+        }
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoExclusions)
+        }))
+    }
+}
+
+tasks.named('check') {
+    dependsOn jacocoTestCoverageVerification
+}
+
+checkstyle {
+    toolVersion = '13.4.0'
+
+    var checkstyleDir = layout.projectDirectory.dir("config/checkstyle")
+    configDirectory.set(checkstyleDir)
+    configFile = checkstyleDir.file("checkstyle.xml").asFile
+
+    // Normalize paths for Windows compatibility
+    def suppressionsPath = checkstyleDir.file("checkstyle-suppressions.xml").asFile.absolutePath.replace('\\', '/')
+    def xpathSuppressionsPath = checkstyleDir.file("checkstyle-xpath-suppressions.xml").asFile.absolutePath.replace('\\', '/')
+
+    configProperties = [
+            'org.checkstyle.google.suppressionfilter.config'     : suppressionsPath,
+            'org.checkstyle.google.suppressionxpathfilter.config': xpathSuppressionsPath,
+            'org.checkstyle.google.severity'                     : 'error'
+    ]
+
+    ignoreFailures = false
+    maxWarnings = 0
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "TomaszStr_SimpleStockMarket"
+        property "sonar.organization", "tomaszstr"
+        property "sonar.host.url", "https://sonarcloud.io"
+
+        // Link the reports
+        property "sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml"
+        property "sonar.java.checkstyle.reportPaths", "${layout.buildDirectory.get()}/reports/checkstyle/main.xml"
+
+        // Exclude specific files from Sonar analysis
+        property "sonar.exclusions", "**/SimpleStockMarketApplication.java, **/config/**, **/*Dto.java, **/entities/**"
+    }
+}
