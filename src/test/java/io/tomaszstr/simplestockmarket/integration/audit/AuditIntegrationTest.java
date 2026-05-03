@@ -3,7 +3,6 @@ package io.tomaszstr.simplestockmarket.integration.audit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.tomaszstr.simplestockmarket.audit.AuditService;
-import io.tomaszstr.simplestockmarket.config.ApiConstants;
 import io.tomaszstr.simplestockmarket.integration.BaseIntegrationTest;
 import io.tomaszstr.simplestockmarket.wallet.ActionType;
 import java.util.UUID;
@@ -16,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class AuditIntegrationTest extends BaseIntegrationTest {
 
-    private static final String ENDPOINT_LOG = ApiConstants.V1 + "/log";
+    private static final String ENDPOINT_LOG = "/log";
     private static final UUID WALLET_ID = UUID.randomUUID();
     private static final String TICKER = "CBDADSA";
     private static final String ACTION_BUY = "buy";

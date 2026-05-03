@@ -1,6 +1,5 @@
 package io.tomaszstr.simplestockmarket.audit;
 
-import io.tomaszstr.simplestockmarket.config.ApiConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping(ApiConstants.V1 + "/log")
+@RequestMapping("/log")
 @RequiredArgsConstructor
 public class AuditController {
 
