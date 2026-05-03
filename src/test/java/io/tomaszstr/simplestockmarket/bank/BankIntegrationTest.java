@@ -83,7 +83,7 @@ class BankIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("givenNegativeQuantity_whenPostStocks_thenReturn400AndAggregatedErrors")
-    void givenNegativeQuantity_whenPostStocks_thenReturn400AndAggregatedErrors() throws Exception {
+    void givenNegativeQuantity_whenPostStocks_thenReturn400AndAggregatedErrors() {
         String validationErrorJson =
                 """
                 {

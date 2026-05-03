@@ -40,7 +40,7 @@ class BankStateResponseTest {
 
         // then
         assertThat(response.stocks()).hasSize(1);
-        assertThat(response.stocks().get(0)).isEqualTo(SAMPLE_STOCK);
+        assertThat(response.stocks().getFirst()).isEqualTo(SAMPLE_STOCK);
     }
 
     @Test
@@ -67,9 +67,10 @@ class BankStateResponseTest {
         // given
         var response = new BankStateResponse(List.of(SAMPLE_STOCK));
         List<StockInfo> resultStocks = response.stocks();
+        StockInfo stockInfo = new StockInfo("GOOG", 10L);
 
         // when & then
-        assertThatThrownBy(() -> resultStocks.add(new StockInfo("GOOG", 10L)))
+        assertThatThrownBy(() -> resultStocks.add(stockInfo))
                 .as("List.copyOf should return an unmodifiable list")
                 .isInstanceOf(UnsupportedOperationException.class);
     }
