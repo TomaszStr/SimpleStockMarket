@@ -1,3 +1,10 @@
 spring:
   application:
     name: SimpleStockMarket
+
+springdoc:
+  swagger-ui:
+    url: /openapi.yaml
+    path: /swagger-ui.html
+  api-docs:
+    enabled: false # Disable automatic scanning, keep it "Contract-First"

@@ -1,0 +1,166 @@
+openapi: 3.1.0
+info:
+  title: Simple Stock Market API
+  version: 1.0.0
+  description: API for a simplified stock exchange simulation.
+
+paths:
+  /wallets/{wallet_id}/stocks/{stock_name}:
+    post:
+      summary: Simulate buy or sell of a single stock
+      parameters:
+        - name: wallet_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: stock_name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+              properties:
+                type:
+                  type: string
+                  enum: [ buy, sell ]
+      responses:
+        '200':
+          description: Operation succeeded
+        '400':
+          description: Validation failure (Insufficient stock in bank or wallet)
+        '404':
+          description: Stock not found
+
+    get:
+      summary: Get quantity of a specified stock in a wallet
+      parameters:
+        - name: wallet_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: stock_name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the quantity
+          content:
+            application/json:
+              schema:
+                type: integer
+                example: 99
+
+  /wallets/{wallet_id}:
+    get:
+      summary: Returns current state of a particular wallet
+      parameters:
+        - name: wallet_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Wallet state returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+
+  /stocks:
+    get:
+      summary: Returns current state of the bank
+      responses:
+        '200':
+          description: Bank state returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankState'
+    post:
+      summary: Sets the state of the bank
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankState'
+      responses:
+        '200':
+          description: Bank state updated
+
+  /log:
+    get:
+      summary: Returns entire audit log of successful operations
+      responses:
+        '200':
+          description: Audit log returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLog'
+
+  /chaos:
+    post:
+      summary: Kills the instance serving the request
+      responses:
+        '200':
+          description: Instance shutdown initiated
+
+components:
+  schemas:
+    StockInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: integer
+
+    Wallet:
+      type: object
+      properties:
+        id:
+          type: string
+        stocks:
+          type: array
+          items:
+            $ref: '#/components/schemas/StockInfo'
+
+    BankState:
+      type: object
+      properties:
+        stocks:
+          type: array
+          items:
+            $ref: '#/components/schemas/StockInfo'
+
+    LogEntry:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [ buy, sell ]
+        wallet_id:
+          type: string
+        stock_name:
+          type: string
+
+    AuditLog:
+      type: object
+      properties:
+        log:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogEntry'
