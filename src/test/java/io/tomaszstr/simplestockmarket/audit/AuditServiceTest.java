@@ -97,7 +97,6 @@ class AuditServiceTest {
                 .hasMessage("Could not retrieve audit logs")
                 .hasCauseInstanceOf(RuntimeException.class);
 
-        // Verify the repository was actually called
         verify(auditRepository).findAllByOrderByIdAsc();
     }
 
