@@ -83,6 +83,38 @@ class AuditServiceTest {
         verify(auditRepository).findAllByOrderByIdAsc();
     }
 
+    @Test
+    @DisplayName("Should throw SimpleStockMarketException when database fails")
+    void getFullAuditLog_whenDatabaseFails_shouldThrowCustomException() {
+        // given
+        String errorMessage = "Database connection timed out";
+        given(auditRepository.findAllByOrderByIdAsc()).willThrow(
+                new RuntimeException(errorMessage));
+
+        // when & then
+        assertThatThrownBy(() -> auditService.getFullAuditLog())
+                .isInstanceOf(SimpleStockMarketException.class)
+                .hasMessage("Could not retrieve audit logs")
+                .hasCauseInstanceOf(RuntimeException.class);
+
+        // Verify the repository was actually called
+        verify(auditRepository).findAllByOrderByIdAsc();
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no logs exist")
+    void getFullAuditLog_whenNoLogs_shouldReturnEmptyResponse() {
+        // given
+        given(auditRepository.findAllByOrderByIdAsc()).willReturn(List.of());
+
+        // when
+        AuditLogResponse response = auditService.getFullAuditLog();
+
+        // then
+        assertThat(response.log()).isEmpty();
+        verify(auditRepository).findAllByOrderByIdAsc();
+    }
+
     private AuditLog createAuditEntry() {
         return AuditLog.builder()
                 .walletId(WALLET_ID)
