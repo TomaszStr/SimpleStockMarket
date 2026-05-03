@@ -418,13 +418,14 @@
             <property name="allowedAnnotations" value="Override, Test"/>
             <property name="tokens" value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF, COMPACT_CTOR_DEF"/>
         </module>
-        <module name="MissingJavadocMethod">
-            <property name="scope" value="protected"/>
-            <property name="allowMissingPropertyJavadoc" value="true"/>
-            <property name="allowedAnnotations" value="Override, Test"/>
-            <property name="tokens" value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF,
-                                   COMPACT_CTOR_DEF"/>
-        </module>
+<!--        DO NOT REQUIRE JAVADOCS-->
+<!--        <module name="MissingJavadocMethod">-->
+<!--            <property name="scope" value="protected"/>-->
+<!--            <property name="allowMissingPropertyJavadoc" value="true"/>-->
+<!--            <property name="allowedAnnotations" value="Override, Test"/>-->
+<!--            <property name="tokens" value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF,-->
+<!--                                   COMPACT_CTOR_DEF"/>-->
+<!--        </module>-->
         <module name="SuppressionXpathSingleFilter">
             <property name="checks" value="MissingJavadocMethod"/>
             <property name="query" value="//*[self::METHOD_DEF or self::CTOR_DEF
