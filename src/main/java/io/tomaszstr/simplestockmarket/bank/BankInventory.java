@@ -15,7 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-class BankInventory {
+public class BankInventory {
     @Id
     private String ticker;
     private Long quantity;

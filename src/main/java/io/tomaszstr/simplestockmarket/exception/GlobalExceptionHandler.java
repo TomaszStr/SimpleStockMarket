@@ -3,6 +3,7 @@ package io.tomaszstr.simplestockmarket.exception;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
 
     /**
      * Handles Jakarta Bean Validation failures (triggered by @Valid).
@@ -64,6 +64,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
         log.warn("Validation error: {}", ex.getMessage());
         return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    /**
+     * Handles cases where a requested stock ticker is not found in the system.
+     * This ensures the API returns the mandatory 404 status when an operation
+     * targets a non-existent stock.
+     *
+     * @param ex The stock not found exception.
+     * @return A {@link ResponseEntity} with status 404 (Not Found) and the error message.
+     */
+    @ExceptionHandler(StockNotFoundException.class)
+    public ResponseEntity<String> handleNotFound(StockNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
     /**

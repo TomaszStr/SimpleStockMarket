@@ -1,5 +1,6 @@
 package io.tomaszstr.simplestockmarket.bank;
 
+import io.tomaszstr.simplestockmarket.exception.StockNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-class BankService {
+public class BankService {
 
     private final BankInventoryRepository inventoryRepository;
     private final StockRepository stockRepository;
@@ -38,5 +39,40 @@ class BankService {
 
         inventoryRepository.saveAll(inventories);
         log.debug("Bank state successfully updated");
+    }
+
+    /**
+     * Reduces bank liquidity during a "BUY" operation.
+     * Throws 404 if stock doesn't exist, 400 if bank is out of stock.
+     */
+    @Transactional
+    public void reduceStock(String ticker, long quantity) {
+        BankInventory inventory = inventoryRepository.findById(ticker)
+                .orElseThrow(() -> new StockNotFoundException(
+                        "Stock " + ticker + " does not exist in the system"));
+
+        if (inventory.getQuantity() < quantity) {
+            log.warn("Bank liquidity exhausted for {}. Requested: {}, Available: {}", ticker,
+                    quantity, inventory.getQuantity());
+            throw new IllegalArgumentException("Insufficient stock in the bank for: " + ticker);
+        }
+
+        inventory.setQuantity(inventory.getQuantity() - quantity);
+        inventoryRepository.save(inventory);
+        log.info("Bank reduced {} stock by {}", ticker, quantity);
+    }
+
+    /**
+     * Increases bank liquidity during a "SELL" operation.
+     */
+    @Transactional
+    public void increaseStock(String ticker, long quantity) {
+        BankInventory inventory = inventoryRepository.findById(ticker)
+                .orElseThrow(() -> new StockNotFoundException(
+                        "Stock " + ticker + " does not exist in the system"));
+
+        inventory.setQuantity(inventory.getQuantity() + quantity);
+        inventoryRepository.save(inventory);
+        log.info("Bank increased {} stock by {}", ticker, quantity);
     }
 }
