@@ -1,7 +1,6 @@
 package io.tomaszstr.simplestockmarket.wallet;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +36,7 @@ class WalletControllerTest {
                 .content(json)
                 .assertThat().hasStatusOk();
 
-        verify(walletService).performAction(eq(walletId), eq("AAPL"), eq(ActionType.BUY));
+        verify(walletService).performAction(walletId, "AAPL", ActionType.BUY);
     }
 
     @Test

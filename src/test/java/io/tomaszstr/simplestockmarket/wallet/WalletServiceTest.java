@@ -3,7 +3,6 @@ package io.tomaszstr.simplestockmarket.wallet;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,8 +49,7 @@ class WalletServiceTest {
         // then
         verify(bankService).reduceStock("AAPL", 1L);
         verify(inventoryRepository).save(argThat(inv -> inv.getQuantity() == 1));
-        verify(auditService).recordSuccessfulOperation(eq(walletId), eq("AAPL"), eq(ActionType.BUY),
-                eq(1L));
+        verify(auditService).recordSuccessfulOperation(walletId, "AAPL", ActionType.BUY, 1L);
     }
 
     @Test
