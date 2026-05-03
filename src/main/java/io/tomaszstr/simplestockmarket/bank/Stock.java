@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-class Stock {
+public class Stock {
     @Id
     private String ticker;
     private String name;
