@@ -22,7 +22,7 @@ public class ChaosController {
         Thread.ofVirtual().start(() -> {
             try {
                 Thread.sleep(Duration.ofMillis(100));
-            } catch (InterruptedException e) {
+            } catch (InterruptedException _) {
                 Thread.currentThread().interrupt();
             }
 
