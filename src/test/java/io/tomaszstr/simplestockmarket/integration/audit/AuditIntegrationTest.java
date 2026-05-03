@@ -47,11 +47,12 @@ class AuditIntegrationTest extends BaseIntegrationTest {
         mockMvc.get().uri(ENDPOINT_LOG)
                 .assertThat().hasStatusOk()
                 .bodyJson()
-                .hasPathSatisfying("$.log[0].type", type -> assertThat(type).isEqualTo(ACTION_BUY))
+                .hasPathSatisfying("$.log[0].type",
+                        type -> assertThat(type).asString().isEqualTo(ACTION_BUY))
                 .hasPathSatisfying("$.log[0].wallet_id",
-                        id -> assertThat(id).isEqualTo(WALLET_ID.toString()))
+                        id -> assertThat(id).asString().isEqualTo(WALLET_ID.toString()))
                 .hasPathSatisfying("$.log[0].stock_name",
-                        name -> assertThat(name).isEqualTo(TICKER));
+                        name -> assertThat(name).asString().isEqualTo(TICKER));
     }
 
     @Test
@@ -69,8 +70,8 @@ class AuditIntegrationTest extends BaseIntegrationTest {
                         logs -> assertThat(logs).asInstanceOf(InstanceOfAssertFactories.LIST)
                                 .hasSize(2))
                 .hasPathSatisfying("$.log[0].stock_name",
-                        name -> assertThat(name).isEqualTo("STOCK1"))
+                        name -> assertThat(name).asString().isEqualTo("STOCK1"))
                 .hasPathSatisfying("$.log[1].stock_name",
-                        name -> assertThat(name).isEqualTo("STOCK2"));
+                        name -> assertThat(name).asString().isEqualTo("STOCK2"));
     }
 }
