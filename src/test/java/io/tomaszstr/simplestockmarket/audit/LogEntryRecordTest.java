@@ -37,11 +37,11 @@ class LogEntryRecordTest {
     @DisplayName("Should create record successfully when all fields are provided")
     void givenValidData_whenCreatingRecord_thenFieldsAreSet() {
         // when
-        var record = new LogEntryRecord(TYPE, WALLET_ID, STOCK);
+        var logEntryRecord = new LogEntryRecord(TYPE, WALLET_ID, STOCK);
 
         // then
-        assertThat(record.type()).isEqualTo(TYPE);
-        assertThat(record.walletId()).isEqualTo(WALLET_ID);
-        assertThat(record.stockName()).isEqualTo(STOCK);
+        assertThat(logEntryRecord.type()).isEqualTo(TYPE);
+        assertThat(logEntryRecord.walletId()).isEqualTo(WALLET_ID);
+        assertThat(logEntryRecord.stockName()).isEqualTo(STOCK);
     }
 }
