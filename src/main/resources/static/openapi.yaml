@@ -3,7 +3,9 @@ info:
   title: Simple Stock Market API
   version: 1.0.0
   description: API for a simplified stock exchange simulation.
-
+servers:
+  - url: /v1
+    description: Version 1 of the API
 paths:
   /wallets/{wallet_id}/stocks/{stock_name}:
     post:
