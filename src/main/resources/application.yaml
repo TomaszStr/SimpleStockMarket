@@ -9,8 +9,8 @@ spring:
       ddl-auto: validate
 
 springdoc:
+  api-docs:
+    enabled: true
   swagger-ui:
     url: /openapi.yaml
     path: /swagger-ui.html
-  api-docs:
-    enabled: false # Disable automatic scanning, keep it "Contract-First"
