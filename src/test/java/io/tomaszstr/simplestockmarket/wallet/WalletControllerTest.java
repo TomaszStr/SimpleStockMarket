@@ -52,9 +52,12 @@ class WalletControllerTest {
         mockMvc.get().uri("/wallets/{id}", walletId)
                 .assertThat().hasStatusOk()
                 .bodyJson()
-                .hasPathSatisfying("$.id", id -> assertThat(id).asString().isEqualTo(walletId.toString()))
-                .hasPathSatisfying("$.stocks[0].quantity", q -> assertThat(q).asNumber().isEqualTo(10))
-                .hasPathSatisfying("$.stocks[0].name", n -> assertThat(n).asString().isEqualTo("AAPL"));
+                .hasPathSatisfying("$.id",
+                        id -> assertThat(id).asString().isEqualTo(walletId.toString()))
+                .hasPathSatisfying("$.stocks[0].quantity",
+                        q -> assertThat(q).asNumber().isEqualTo(10))
+                .hasPathSatisfying("$.stocks[0].name",
+                        n -> assertThat(n).asString().isEqualTo("AAPL"));
     }
 
     @Test
